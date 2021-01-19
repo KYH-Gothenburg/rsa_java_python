@@ -58,12 +58,23 @@ public class Main {
 
    }
 
+   public static String encrypt(String message, KeyPair key) {
+       return (new BigInteger(message.getBytes(StandardCharsets.UTF_8))).modPow(key.getKey(), key.getN()).toString();
+   } 
+
+   public static String decrypt(String message, KeyPair key) {
+       String msg = new String(message.getBytes(StandardCharsets.UTF_8));
+        return new String((new BigInteger(msg)).modPow(key.getKey(), key.getN()).toByteArray());
+   }
+
    public static void main(String[] args) {
       int bitLength = 4096;
       //generateKeys("Jocke", bitLength);
       KeyPair publicKey = readKey("Jocke_pub.key");
       KeyPair privateKey = readKey("Jocke_priv.key");
-      String encrypted = encrypt("Hemligt meddelande", publicKey);
+      String encrypted = encrypt("Pröjsa genast", publicKey);
+      String clear = decrypt(encrypted, privateKey);
+      System.out.println(clear);
       // Encrypt
       //String cipher = msg.modPow(e, n).toString();
       // Decrypt

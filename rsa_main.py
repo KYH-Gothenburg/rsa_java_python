@@ -112,8 +112,13 @@ def read_keys(name):
 
 def encrypt(message, public_key):
     _, e, n = public_key
+    return [pow(c, e, n) for c in message]
 
-    return bytearray([int(pow(c, e, n)).to_bytes(256, 'big') for c in message])
+
+def decrypt(message, private_key):
+    _, d, n = private_key
+    return ''.join([chr(pow(c, d, n)) for c in message])
+
 
 def main():
     key_size = 2048
@@ -122,21 +127,28 @@ def main():
         make_key_files(name, key_size)
     
     public_key, private_key = read_keys(name)
-
-    print('Menu')
-    print('1. Encrypt String')
-    print('2. Decrypt Massage')
-    print()
+    cipher = ''
     while True:
-        menu_selection = input('> ')
-        if menu_selection in '12':
-            break
-    if menu_selection == '1':
-        message = input("Enter message to encrypt: ")
-        byte_msg = message.encode()
+        print('Menu')
+        print('1. Encrypt String')
+        print('2. Decrypt Massage')
+        print('9. Exit')
+        print()
+        while True:
+            menu_selection = input('> ')
+            if menu_selection in '12':
+                break
 
-        cipher = encrypt(byte_msg, public_key)
-        print(cipher)
+        if menu_selection == '1':
+            message = input("Enter message to encrypt: ")
+            byte_msg = message.encode()
+
+            cipher = encrypt(byte_msg, public_key)
+        elif menu_selection == '2':
+            clear_text = decrypt(cipher, private_key)
+            print(clear_text)
+        elif menu_selection == '9':
+            break
     
 
 
