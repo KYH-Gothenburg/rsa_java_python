@@ -105,20 +105,39 @@ def read_keys(name):
             f'WRNING: The file name {name}_pub.key or {name}_priv.key does not exists!'
         )
 
-    public_key = open(f'{name}_pub.key').read().split(',')
-    private_key = open(f'{name}_priv.key').read().split(',')
+    public_key = [int(value) for value in open(f'{name}_pub.key').read().split(',')]
+    private_key = [int(value) for value in open(f'{name}_priv.key').read().split(',')]
     return public_key, private_key
 
 
+def encrypt(message, public_key):
+    _, e, n = public_key
+
+    return bytearray([int(pow(c, e, n)).to_bytes(256, 'big') for c in message])
+
 def main():
     key_size = 2048
-    name = input('Enter a key name')
+    name = input('Enter a key name: ')
     if not os.path.exists(f'{name}_pub.key') or not os.path.exists(f'{name}_priv.key'):
         make_key_files(name, key_size)
     
     public_key, private_key = read_keys(name)
-    print(public_key)
-    print(private_key)
+
+    print('Menu')
+    print('1. Encrypt String')
+    print('2. Decrypt Massage')
+    print()
+    while True:
+        menu_selection = input('> ')
+        if menu_selection in '12':
+            break
+    if menu_selection == '1':
+        message = input("Enter message to encrypt: ")
+        byte_msg = message.encode()
+
+        cipher = encrypt(byte_msg, public_key)
+        print(cipher)
+    
 
 
 
